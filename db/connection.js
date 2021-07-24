@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
-const URI = 'mongodb://localhost/chatApp';
+const URI = process.env.DB_URL;
+
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 const dbConnect = () => {
     return new Promise((resolve, reject) => {
