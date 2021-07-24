@@ -1,0 +1,4 @@
+Local.crt
+Local.key
+node_modules/
+.env
