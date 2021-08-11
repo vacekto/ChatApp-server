@@ -1,6 +1,6 @@
 class InvalidInputError extends Error {
     constructor(message) {
-        super(message); 
+        super(message);
         this.name = "InvalidInputError";
     }
 }
@@ -16,14 +16,18 @@ const errorController = (err, req, res, next) => {
             errorList = ['Email or password is incorrect'];
             break;
         case (err.name === 'MongoError' && err.code === 11000):
-            errorList = ['This email address is already taken'];
+            const field = Object.keys(err.keyValue)
+            errorList = [`This ${field} is already taken`];
+            break;
+        case (err.message === 'This user is already logged in'):
+            errorList = [err.message]
             break;
         default:
-            errorList = ['An unknown error occurred.'];
+            console.log(err)
+            errorList = ['An unknown error has occurred.'];
             statusCode = 500;
     }
-    res.status(statusCode);
-    res.send(errorList)
+    res.status(statusCode).send({ errorList })
 }
 
 module.exports = { errorController, InvalidInputError }

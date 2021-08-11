@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
+const Room = require('../db/models/Room.js')
 const URI = process.env.DB_URL;
+
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -10,8 +12,16 @@ const dbConnect = () => {
         mongoose.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
             .then((res, err) => {
                 if (err) return err;
-                resolve();
+                return Room.findOne({ public: true })
             })
+            .then(publicRoom => {
+                if (!publicRoom) {
+                    const publicRoom = new Room({ public: true, name: 'Public', directChannel: false });
+                    return publicRoom.save();
+                }
+            })
+            .then(() => resolve())
+            .catch(err => reject(err))
     })
 }
 
